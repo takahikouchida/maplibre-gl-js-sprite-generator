@@ -29,7 +29,7 @@ Provide only 96×96 px SVG or PNG icons, and it automatically generates both 1x 
 ```bash
 git clone https://github.com/takahikouchida/maplibre-gl-js-sprite-generator.git
 cd maplibre-gl-js-sprite-generator
-docker build -t maplibre-gl-js-sprite-generator .
+docker build -t spritegen .
 ```
 
 ### ▶️ 実行 / Run

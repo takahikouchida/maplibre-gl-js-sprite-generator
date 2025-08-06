@@ -9,7 +9,7 @@ NODE_SCRIPT_PATH="/app/generate_sprite.js"
 
 mkdir -p "${PNG_TEMP_DIR}" "${OUTPUT_DIR}"
 
-echo "1) SVG → PNG(48px) + PNG@2x(96px)"
+echo "1) SVG → PNG + PNG@2x"
 SVG_FILES=$(find "${SVG_INPUT_DIR}" -name "*.svg")
 if [ -n "${SVG_FILES}" ]; then
   for SVG in ${SVG_FILES}; do
@@ -48,7 +48,7 @@ else
   echo "SVG が見つかりませんでした（スキップ）"
 fi
 
-echo "2) PNG（96px）を入力 → PNG(48px) + PNG@2x(96px)"
+echo "2) PNGを入力 → PNG + PNG@2x"
 PNG_FILES=$(find "${PNG_INPUT_DIR}" -name "*.png")
 if [ -n "${PNG_FILES}" ]; then
   for PNG in ${PNG_FILES}; do
@@ -74,7 +74,7 @@ if [ -z "$(find "${PNG_TEMP_DIR}" -name '*.png')" ]; then
 fi
 
 echo "3) スプライト生成 (1x + 2x)"
-cat << 'EOF' > "${NODE_SCRIPT_PATH}"
+cat << EOF > "${NODE_SCRIPT_PATH}"
 const Spritesmith = require('spritesmith');
 const fs = require('fs'), path = require('path');
 
