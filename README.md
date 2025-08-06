@@ -1,10 +1,10 @@
 # maplibre-gl-js-sprite-generator
 
 **MapLibre GL JS 用のスプライト画像（sprite.png / sprite.json）を自動生成する CLI ツールです。**  
-96×96 px の SVG または PNG ファイルを 1x / 2x 解像度のスプライトに変換できます。
+SVG または PNG ファイルを 1x / 2x 解像度のスプライトに変換できます。
 
 **CLI tool to generate `sprite.png` / `sprite.json` and `sprite@2x.png` / `sprite@2x.json` for [MapLibre GL JS](https://maplibre.org/).**  
-Provide only 96×96 px SVG or PNG icons, and it automatically generates both 1x and 2x sprite assets.
+Provide SVG or PNG icons, and it automatically generates both 1x and 2x sprite assets.
 
 
 ---
