@@ -88,8 +88,6 @@ docker run --rm \
 
 ## 📌 補足 / Notes
 
-- 入力ファイルは **96×96 px** に統一してください（1x は自動で半分に縮小）  
-  Input icons must be 96×96 px. 1x icons are generated automatically by downscaling.
 - `icon.png` → 1x 用、`icon@2x.png` → 2x 用に分類されます  
   `icon.png` is used for 1x, `icon@2x.png` is used for 2x
 - 出力 JSON には `pixelRatio` フィールドが付加されます  
