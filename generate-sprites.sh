@@ -17,6 +17,14 @@ if [ -n "${SVG_FILES}" ]; then
     OUT1X="${PNG_TEMP_DIR}/${NAME}.png"
     OUT2X="${PNG_TEMP_DIR}/${NAME}@2x.png"
 
+    # ファイル名衝突回避（PNG由来と同名なら -svg を追加）
+    if [ -e "${OUT1X}" ] || [ -e "${OUT2X}" ]; then
+      NAME="${NAME}-svg"
+      OUT1X="${PNG_TEMP_DIR}/${NAME}.png"
+      OUT2X="${PNG_TEMP_DIR}/${NAME}@2x.png"
+      echo "⚠️ 衝突回避のためファイル名に -svg を付加: ${NAME}"
+    fi
+
     # 通常解像度 (48px, dpi=96)
     inkscape "${SVG}" \
       --export-type=png \

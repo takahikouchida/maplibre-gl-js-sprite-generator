@@ -97,7 +97,34 @@ docker run --rm \
 
 ---
 
+---
+
+## ⚠️ 注意 / Note on filename collisions
+
+SVG と PNG に同じ名前のファイル（例: `castle.svg` と `castle.png`）が存在する場合、  
+ファイル名の衝突を避けるため、SVG 由来の出力ファイルには自動的に `-svg` サフィックスが追加されます。
+
+When both an SVG and a PNG file share the same base filename (e.g., `castle.svg` and `castle.png`),  
+the script automatically appends a `-svg` suffix to the PNG output derived from the SVG in order to prevent overwriting.
+
+### 例 / Example
+
+```
+Input:
+  svg/castle.svg
+  png/castle.png
+
+Output:
+  castle.png         # ← from PNG
+  castle@2x.png      # ← from PNG
+  castle-svg.png     # ← from SVG (renamed)
+  castle-svg@2x.png  # ← from SVG (renamed)
+```
+
+この処理により、すべてのファイルが安全にスプライトに含まれます。  
+This ensures that all assets are preserved and included in the sprite safely.
+
 ## 📄 ライセンス / License
 
 MIT License  
-© 2025 Your Name
+© 2025 Takahiko Uchida
