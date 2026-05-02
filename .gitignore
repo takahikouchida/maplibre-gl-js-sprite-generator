@@ -1,1 +1,7 @@
+# Generated sprites
+output/*
+!output/.gitkeep
+
+# Temporary files
+*.tmp
 .DS_Store

@@ -1,0 +1,18 @@
+# docker-compose.yml
+services:
+  spritegen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: maplibre-gl-js-sprite-generator:local
+    container_name: maplibre-spritegen
+    volumes:
+      - ./input:/data/input
+      - ./output:/data/output
+    environment:
+      SVG_INPUT_DIR: /data/input/svg
+      PNG_INPUT_DIR: /data/input/png
+      PNG_TEMP_DIR: /tmp/png_icons
+      OUTPUT_DIR: /data/output
+      SPRITE_NAME: sprite
+    command: ["./generate-sprites.sh"]
