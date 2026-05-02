@@ -125,4 +125,3 @@ This ensures that all assets are preserved and included in the sprite safely.
 ## 📄 ライセンス / License
 
 MIT License  
-© 2025 Takahiko Uchida
