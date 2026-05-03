@@ -1,3 +1,13 @@
+# Input icons
+input/*
+!input/.gitkeep
+!input/svg/
+!input/png/
+input/svg/*
+input/png/*
+!input/svg/.gitkeep
+!input/png/.gitkeep
+
 # Generated sprites
 output/*
 !output/.gitkeep

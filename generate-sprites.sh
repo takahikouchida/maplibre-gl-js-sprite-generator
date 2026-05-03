@@ -7,6 +7,10 @@ OUTPUT_DIR="/data/output"
 SPRITE_NAME="sprite"
 NODE_SCRIPT_PATH="/app/generate_sprite.js"
 
+# 出力アイコンサイズ
+ICON_SIZE_1X=32
+ICON_SIZE_2X=64
+
 mkdir -p "${PNG_TEMP_DIR}" "${OUTPUT_DIR}"
 
 echo "1) SVG → PNG + PNG@2x"
@@ -25,24 +29,33 @@ if [ -n "${SVG_FILES}" ]; then
       echo "⚠️ 衝突回避のためファイル名に -svg を付加: ${NAME}"
     fi
 
-    # 通常解像度 (48px, dpi=96)
+    # 通常解像度: 32px x 32px
     inkscape "${SVG}" \
       --export-type=png \
       --export-filename="${OUT1X}" \
       --export-background-opacity=0 \
-      --export-dpi=96
+      --export-width="${ICON_SIZE_1X}" \
+      --export-height="${ICON_SIZE_1X}"
 
-    # 高解像度 (96px, dpi=192)
+    if [ $? -ne 0 ]; then
+      echo "Error: ${SVG} の1x変換に失敗"
+      exit 1
+    fi
+
+    # 高解像度: 64px x 64px
     inkscape "${SVG}" \
       --export-type=png \
       --export-filename="${OUT2X}" \
       --export-background-opacity=0 \
-      --export-dpi=192
+      --export-width="${ICON_SIZE_2X}" \
+      --export-height="${ICON_SIZE_2X}"
 
     if [ $? -ne 0 ]; then
-      echo "Error: ${SVG} の変換に失敗"; exit 1
+      echo "Error: ${SVG} の2x変換に失敗"
+      exit 1
     fi
-    echo "  → ${OUT1X} / ${OUT2X}"
+
+    echo "  → ${OUT1X} (${ICON_SIZE_1X}x${ICON_SIZE_1X}) / ${OUT2X} (${ICON_SIZE_2X}x${ICON_SIZE_2X})"
   done
 else
   echo "SVG が見つかりませんでした（スキップ）"
@@ -56,13 +69,33 @@ if [ -n "${PNG_FILES}" ]; then
     OUT1X="${PNG_TEMP_DIR}/${NAME}.png"
     OUT2X="${PNG_TEMP_DIR}/${NAME}@2x.png"
 
-    # 2x はそのままコピー
-    cp "${PNG}" "${OUT2X}"
+    # 1x: 32px x 32px に正規化
+    convert "${PNG}" \
+      -background none \
+      -resize "${ICON_SIZE_1X}x${ICON_SIZE_1X}" \
+      -gravity center \
+      -extent "${ICON_SIZE_1X}x${ICON_SIZE_1X}" \
+      "${OUT1X}"
 
-    # 1x は50%に縮小（ImageMagick）
-    convert "${PNG}" -resize 50% "${OUT1X}"
+    if [ $? -ne 0 ]; then
+      echo "Error: ${PNG} の1x変換に失敗"
+      exit 1
+    fi
 
-    echo "  → ${OUT1X} / ${OUT2X}"
+    # 2x: 64px x 64px に正規化
+    convert "${PNG}" \
+      -background none \
+      -resize "${ICON_SIZE_2X}x${ICON_SIZE_2X}" \
+      -gravity center \
+      -extent "${ICON_SIZE_2X}x${ICON_SIZE_2X}" \
+      "${OUT2X}"
+
+    if [ $? -ne 0 ]; then
+      echo "Error: ${PNG} の2x変換に失敗"
+      exit 1
+    fi
+
+    echo "  → ${OUT1X} (${ICON_SIZE_1X}x${ICON_SIZE_1X}) / ${OUT2X} (${ICON_SIZE_2X}x${ICON_SIZE_2X})"
   done
 else
   echo "PNG が見つかりませんでした（スキップ）"
@@ -70,7 +103,8 @@ fi
 
 # PNGが一つもない場合は終了
 if [ -z "$(find "${PNG_TEMP_DIR}" -name '*.png')" ]; then
-  echo "変換・入力されたPNGが見つかりません"; exit 1
+  echo "変換・入力されたPNGが見つかりません"
+  exit 1
 fi
 
 echo "3) スプライト生成 (1x + 2x)"
@@ -98,12 +132,19 @@ function generateSprite(scale) {
       const c = result.coordinates[file];
       const key = path.basename(file, '.png').replace('@2x', '');
       meta[key] = {
-        x: c.x, y: c.y, width: c.width, height: c.height, pixelRatio: scale
+        x: c.x,
+        y: c.y,
+        width: c.width,
+        height: c.height,
+        pixelRatio: scale
       };
     }
 
-    fs.writeFileSync(path.join(outDir, name + suffix + '.json'),
-      JSON.stringify(meta, null, 2));
+    fs.writeFileSync(
+      path.join(outDir, name + suffix + '.json'),
+      JSON.stringify(meta, null, 2)
+    );
+
     console.log(\`Sprite\${suffix} generated.\`);
   });
 }
@@ -113,7 +154,10 @@ generateSprite(2);
 EOF
 
 export PNG_TEMP_DIR OUTPUT_DIR SPRITE_NAME
-node "${NODE_SCRIPT_PATH}" || { echo "Spritesmith error"; exit 1; }
+node "${NODE_SCRIPT_PATH}" || {
+  echo "Spritesmith error"
+  exit 1
+}
 
 echo "4) 後処理・クリーンアップ"
 rm -rf "${PNG_TEMP_DIR}" "${NODE_SCRIPT_PATH}"
